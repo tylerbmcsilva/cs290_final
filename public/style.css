@@ -9,3 +9,16 @@ body {
   padding: 1em;
   background-color: #EEE;
 }
+
+h1,h2,h3,h4,h5,h6,p {
+  margin: 0;
+  padding: 0;
+}
+
+.card {
+  display: block;
+  width: 100%;
+  padding: 1em;
+  background: #ffffff;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
