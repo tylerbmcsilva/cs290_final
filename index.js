@@ -1,12 +1,23 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
-var dbConfig = require('./config.js');
+var dbConfig = require('./config.js'); 
 
 var db = mysql.createPool(dbConfig);
 
 var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout:'main'});
+
+// HELPER FUNCTION TO CREATE RANODOM IDS
+// https://stackoverflow.com/questions/6860853/generate-random-string-for-div-id
+function guidGenerator() {
+    var S4 = function() {
+       return (((1+Math.random())*0x10000)|0);
+    };
+    return (S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4());
+}
+
+
 
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
@@ -20,6 +31,34 @@ app.get('/', function(req, res){
   res.render('index');
 });
 
+app.get('/workouts',function(req,res,next){
+  var context = {};
+  db.query("SELECT * FROM workouts", function(err, result){
+    if(err){
+      next(err);
+      return;
+    }
+
+    res.send(JSON.stringify(result));
+  });
+});
+
+app.post('/workouts',function(req,res,next){
+  var context = {};
+  var wo = req.body;
+  wo.id = guidGenerator();
+  wo.date = new Date().toISOString().slice(0, 10);
+  console.log(wo);
+  db.query("INSERT INTO workouts SET ?",wo, function(err, result){
+      if(err){
+        next(err);
+        return;
+      }
+      console.log(result)
+      context.id = result.insertId; 
+      res.send(JSON.stringify(context));
+  });
+});
 
 app.get('/reset-table',function(req,res,next){
   var context = {};
