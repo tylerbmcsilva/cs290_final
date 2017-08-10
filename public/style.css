@@ -15,10 +15,128 @@ h1,h2,h3,h4,h5,h6,p {
   padding: 0;
 }
 
-.card {
-  display: block;
+header {
+  margin: 1%;
+}
+
+label {
+    display: block;
+    width: 100%;
+    margin-bottom:  0.65em;
+}
+
+label:last-child {
+  margin-bottom: 0;
+}
+
+form input {
+    padding: 0.25em;
+    font-size: 16px;
+    width:  100%;
+}
+
+.tracker-table {
+  border: 1px solid rgba(0,0,0,0.23);
+  border-collapse: collapse;
   width: 100%;
+}
+
+.tracker-table td,
+.tracker-table th {
+  border: 1px solid rgba(0,0,0,0.23);
+  padding: 0.5em;
+  text-align: center;
+}
+
+.tracker-table input {
+  border: 0;
+  margin: 0;
+  background-color: transparent;
+  outline:none;
+}
+
+.header-id,
+.id {
+  display:none;
+  width: 0;
+  height: 0;
+}
+
+.edited {
+  background-color: #FFFFAA;
+}
+
+.tracker-table .save-btn,
+.tracker-table .delete-btn {
+  font-size: 10px;
+  padding: 0.5em;
+  margin: 1%;
+}
+
+.tracker-table .save-btn {
+  background-color: #99FF99
+}
+.tracker-table .delete-btn {
+  background-color: #FF9999;
+}
+
+.card {
   padding: 1em;
   background: #ffffff;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+.card > * {
+  margin-bottom: 0.65em;
+}
+.card > *:last-child {
+  margin-bottom: 0;
+}
+
+.thirty {
+  display: inline-block;
+  width: 98%;
+  margin: 1%;
+  float: left;
+}
+.forty {
+  display: inline-block;
+  width: 98%;
+  margin: 1%;
+  float: left;
+}
+.fifty {
+  display: inline-block;
+  width: 98%;
+  margin: 1%;
+  float: left;
+}
+.sixty {
+  display: inline-block;
+  width: 98%;
+  margin: 1%;
+  float: left;
+}
+.seventy {
+  display: inline-block;
+  width: 98%;
+  margin: 1%;
+  float: left;
+}
+
+@media screen and (min-width: 950px){
+  .thirty {
+    width: 28%;
+  }
+  .forty {
+    width: 38%;
+  }
+  .fifty {
+    width: 48%;
+  }
+  .sixty {
+    width: 58%;
+  }
+  .seventy {
+    width: 68%;
+  }
 }

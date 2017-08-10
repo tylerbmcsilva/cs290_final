@@ -8,15 +8,6 @@ var db = mysql.createPool(dbConfig);
 var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout:'main'});
 
-// HELPER FUNCTION TO CREATE RANODOM IDS
-// https://stackoverflow.com/questions/6860853/generate-random-string-for-div-id
-function guidGenerator() {
-    var S4 = function() {
-       return (((1+Math.random())*0x10000)|0);
-    };
-    return (S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4());
-}
-
 
 
 app.engine('handlebars', handlebars.engine);
@@ -31,6 +22,7 @@ app.get('/', function(req, res){
   res.render('index');
 });
 
+// Get all workouts
 app.get('/workouts',function(req,res,next){
   var context = {};
   db.query("SELECT * FROM workouts", function(err, result){
@@ -38,24 +30,64 @@ app.get('/workouts',function(req,res,next){
       next(err);
       return;
     }
-
     res.send(JSON.stringify(result));
   });
 });
 
+// Create 1 workout
 app.post('/workouts',function(req,res,next){
   var context = {};
   var wo = req.body;
-  wo.id = guidGenerator();
-  wo.date = new Date().toISOString().slice(0, 10);
-  console.log(wo);
+  wo.date = new Date().toISOString();
+  console.log(wo.date);
   db.query("INSERT INTO workouts SET ?",wo, function(err, result){
+    if(err){
+      next(err);
+      return;
+    }
+    context.id = result.insertId; 
+    res.send(JSON.stringify(context));
+  });
+});
+
+// Get 1 workout
+app.get('/workouts/:id',function(req,res,next){
+  db.query("SELECT * FROM workouts where id = ?", req.params.id,function(err, result){
+    if(err){
+      next(err);
+      return;
+    }
+    res.send(JSON.stringify(result[0]));
+  });
+});
+
+// Update 1 workout
+app.put('/workouts/:id', function(req,res,next){
+  var context = {};
+  db.query("UPDATE workouts SET name=?, reps=?, weight=?, lbs=? where id=?",
+  [ req.body.name,
+    parseInt(req.body.reps),
+    parseInt(req.body.weight),
+    parseInt(req.body.lbs),
+    parseInt(req.params.id)], function(err, result){
       if(err){
         next(err);
         return;
       }
-      console.log(result)
-      context.id = result.insertId; 
+      context.success = true;
+      res.send(JSON.stringify(context));
+  });
+});
+
+// Delete 1 workout
+app.delete('/workouts/:id', function(req,res,next){
+  var context = {};
+  db.query("DELETE FROM workouts WHERE id=?",req.params.id, function(err, result){
+      if(err){
+        next(err);
+        return;
+      }
+      context.success = true;
       res.send(JSON.stringify(context));
   });
 });
