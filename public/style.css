@@ -19,6 +19,10 @@ header {
   margin: 1%;
 }
 
+.subheader {
+  max-width: 600px;
+}
+
 label {
     display: block;
     width: 100%;
@@ -29,10 +33,42 @@ label:last-child {
   margin-bottom: 0;
 }
 
+input {
+  cursor: pointer;
+}
+
 form input {
     padding: 0.25em;
     font-size: 16px;
     width:  100%;
+}
+
+form input[type="text"],
+form input[type="number"]{
+  border: 0;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.23);
+  outline: none;
+  -webkit-transition: box-shadow 200ms ease-in-out;
+  -moz-transition: box-shadow 200ms ease-in-out;
+  transition: box-shadow 200ms ease-in-out;
+}
+form input[type="text"]:focus,
+form input[type="number"]:focus{
+  border: 0;
+  box-shadow: inset 0 -2px 0 rgb(100,100,255);
+}
+
+form input[type="submit"] {
+    display: block;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+    outline: 0;
+    padding: 0.5em 1em;
+    background-color: rgb(100,100,255);
+    border: 0;
+    border-radius: 3px;
+    box-shadow: 0 3px rgb(60,60,215);
 }
 
 .tracker-table {
@@ -62,21 +98,52 @@ form input {
   height: 0;
 }
 
+#message-wrapper {
+  position: absolute;
+  width: 400px;
+  bottom: 0;
+  right: 0;
+  padding: 1em;
+}
+
+.message {
+  display: block;
+  margin: 1%;
+  width: 98%;
+  padding: 0.5em;
+  border-radius: 4px;
+  z-index: 999;
+  -webkit-transition: all 250ms ease-in-out 50ms;
+  -moz-transition: all 250ms ease-in-out 50ms;
+  transition: all 250ms ease-in-out 50ms;
+}
+
+.message-error {
+  background-color: #FF9999
+}
+.message-success {
+  background-color: #99FF99
+}
+
 .edited {
   background-color: #FFFFAA;
 }
 
 .tracker-table .save-btn,
 .tracker-table .delete-btn {
+  display:none;
   font-size: 10px;
   padding: 0.5em;
   margin: 1%;
+  border-radius: 3px;
 }
 
-.tracker-table .save-btn {
+.tracker-table .edited .save-btn {
+  display:inline-block;
   background-color: #99FF99
 }
 .tracker-table .delete-btn {
+  display:inline-block;
   background-color: #FF9999;
 }
 

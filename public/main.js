@@ -79,6 +79,7 @@ function createHTMLElement(el, attrs) {
     return x;
 }
 function createTableRow(data){
+    console.log(data);
     var row = createHTMLElement("tr", {
         id: data.id
     });
@@ -94,7 +95,7 @@ function createTableRow(data){
                 var theDate = new Date(data[keys[y]]);
                 el = createHTMLElement("p",{
                     className: "dateAdded",
-                    innerHTML: `${theDate.getMonth()+1}/${theDate.getDay()+1}/${theDate.getFullYear()}`
+                    innerHTML: `${theDate.getMonth()+1}/${theDate.getUTCDate()}/${theDate.getFullYear()}`
                 })
                 break;
             case "name":
@@ -190,7 +191,8 @@ function getWorkout(id, callback){
     let a = ajax();
     a.get(`/workouts/${id}`, function (res) {
         if(res.status !== 200){
-            throw Error();
+            createMessage('error', 'Workout Not Found!', 93486752941);
+            return
         }
         return callback(JSON.parse(res.response));
     })
@@ -205,6 +207,7 @@ function saveWorkout(id) {
         lbs: document.getElementById(`${id}-lbs`).checked ? 1 : 0,
     }
     a.put(`/workouts/${id}`, JSON.stringify(context), function (res) {
+        createMessage('success', 'Workout Saved!', 6858489392);
         document.getElementById(id).className = "";
         document.getElementById(id).blur();
     })
@@ -212,16 +215,27 @@ function saveWorkout(id) {
 
 function deleteWorkout(id) {
     let a = ajax();
-    a.delete(`/workouts/${id}`, function (res) {
-        let child = document.getElementById(id)
-        child.parentNode.removeChild(child);
-    })
+    if(window.confirm("Are you sure you want to delete?")){
+        a.delete(`/workouts/${id}`, function (res) {
+            if(res.status !== 200){
+                createMessage('error', 'Workout was not deleted!', 970807958);
+            }
+            let child = document.getElementById(id)
+            child.parentNode.removeChild(child);
+            createMessage('success', 'Workout Deleted!', 2737947892394);
+        });
+    } else {
+        createMessage('error', 'Workout was not deleted!', 970807958);
+    }
+
 }
 
 function handleClick(target) {
     switch (target.className) {
         case "save-btn":
-            saveWorkout(target.parentNode.parentNode.id);
+            if(target.parentNode.parentNode.className == "edited"){
+                saveWorkout(target.parentNode.parentNode.id);
+            }
             return;
         case "delete-btn":
             deleteWorkout(target.parentNode.parentNode.id);
@@ -237,8 +251,9 @@ function createHeader() {
         innerHTML: "Workout Tracker"
     });
     header.appendChild(heading);
-    var subhead = createHTMLElement("h3", {
-        innerHTML: "Track your workouts! Use the form to add workouts to your table. Also, feel free to edit the info in the table. Don't forget to save!"
+    var subhead = createHTMLElement("p", {
+        className: "subheader",
+        innerHTML: "Track your workouts! Use the form to add workouts to your table. Also, feel free to edit the info in the table directly. If a cell has been edited, the row will turn yellow and you will then have to click save!"
     });
     header.appendChild(subhead);
     return header;
@@ -310,6 +325,26 @@ function clearForm(){
     document.getElementById("Lbs").checked = false;
 }
 
+function createMessage(type, message, id){
+    var mes = createHTMLElement("p", {
+        id: id,
+        innerHTML: message,
+        className: `message message-${type}`
+    })
+    document.getElementById("message-wrapper").appendChild(mes);
+    setTimeout(function(){
+        let child = document.getElementById(id)
+        child.parentNode.removeChild(child);
+    }, 5000);
+}
+
+
+
+
+
+
+
+
 function main(id) {
     var a = ajax();
     var entry = document.getElementById(id);
@@ -326,14 +361,17 @@ function main(id) {
     });
     a.get("/workouts", function (res) {
         if(res.status !== 200){
-            alert(res);
+            createMessage('error', 'Error receiving workouts, please refresh', 923487593847);
         }
         workoutTableDiv.appendChild(createTable(JSON.parse(res.response)));
     });
     entry.appendChild(workoutTableDiv);
 
     // Error Zone
-    
+    var errorDiv = createHTMLElement("div", {
+        id: "message-wrapper"
+    });
+    entry.appendChild(errorDiv);
 
     // If there's a click anywhere on the page
     document.addEventListener("click", function (e) {
@@ -349,18 +387,19 @@ function main(id) {
             weight: parseInt(document.getElementById("Weight").value),
             lbs: document.getElementById("Lbs").checked ? 1 : 0
         }
-        if( typeof context.name !== "string" || 
+        if( typeof context.name !== "string" ||
+            context.name == "" ||
             typeof context.reps !== "number" ||
             typeof context.weight !== "number" || 
             typeof context.lbs !== "number"
         ){
-            throw Error();
+            createMessage('error', 'Please Verify Workout Info Before Submitting', 234235);
+            return;
         }
         a.post("/workouts", JSON.stringify(context),function(e){
-            console.log(e);
             getWorkout(JSON.parse(e.response).id, function(res){
-                console.log(res);
                 document.getElementById("woTbody").appendChild(createTableRow(res));
+                createMessage('success', `${res.name} workout Created!`, 93486752941);
                 clearForm();
             });
             
