@@ -147,6 +147,11 @@ form input[type="submit"] {
   background-color: #FF9999;
 }
 
+.tracker-table .edited .delete-btn {
+  display:none;
+  background-color: #FF9999;
+}
+
 .card {
   padding: 1em;
   background: #ffffff;

@@ -68,6 +68,8 @@ function ajax() {
     }
 }
 
+/*********************************************/
+
 function createHTMLElement(el, attrs) {
     let x = document.createElement(el);
     if (attrs !== null && attrs !== undefined) {
@@ -78,6 +80,9 @@ function createHTMLElement(el, attrs) {
     }
     return x;
 }
+
+/*********************************************/
+
 function createTableRow(data){
     console.log(data);
     var row = createHTMLElement("tr", {
@@ -158,6 +163,8 @@ function createTableRow(data){
     return row;
 }
 
+/*********************************************/
+
 function createTable(data) {
     var headerRow = ["Date Added", "Name", "Reps", "Weight", "Lbs", "Updates"];
 
@@ -186,6 +193,8 @@ function createTable(data) {
     return table;
 }
 
+/*********************************************/
+
 function getWorkout(id, callback){
     console.log(id);
     let a = ajax();
@@ -198,6 +207,8 @@ function getWorkout(id, callback){
     })
 }
 
+/*********************************************/
+
 function saveWorkout(id) {
     let a = ajax();
     var context = {
@@ -206,12 +217,20 @@ function saveWorkout(id) {
         weight: document.getElementById(`${id}-weight`).value,
         lbs: document.getElementById(`${id}-lbs`).checked ? 1 : 0,
     }
-    a.put(`/workouts/${id}`, JSON.stringify(context), function (res) {
-        createMessage('success', 'Workout Saved!', 6858489392);
-        document.getElementById(id).className = "";
-        document.getElementById(id).blur();
-    })
+    if(context.name == "" || typeof context.name !== "string"){
+        createMessage("error", "Workout needs a name...", 67548390);
+        return;
+    } else {
+        a.put(`/workouts/${id}`, JSON.stringify(context), function (res) {
+            createMessage('success', 'Workout Saved!', 6858489392);
+            document.getElementById(id).className = "";
+            document.getElementById(id).blur();
+        })
+    }
+
 }
+
+/*********************************************/
 
 function deleteWorkout(id) {
     let a = ajax();
@@ -230,6 +249,8 @@ function deleteWorkout(id) {
 
 }
 
+/*********************************************/
+
 function handleClick(target) {
     switch (target.className) {
         case "save-btn":
@@ -245,6 +266,8 @@ function handleClick(target) {
     }
 }
 
+/*********************************************/
+
 function createHeader() {
     var header = createHTMLElement("header");
     var heading = createHTMLElement("h1", {
@@ -258,6 +281,8 @@ function createHeader() {
     header.appendChild(subhead);
     return header;
 }
+
+/*********************************************/
 
 function createInputElement(type){
     var el;
@@ -294,6 +319,8 @@ function createInputElement(type){
     return el;
 }
 
+/*********************************************/
+
 function createEntryForm() {
     var formFields = ["Name", "Reps", "Weight", "Lbs", "Add"]
 
@@ -318,12 +345,17 @@ function createEntryForm() {
     entryFormDiv.appendChild(addForm);
     return entryFormDiv;
 }
+
+/*********************************************/
+
 function clearForm(){
     document.getElementById("Name").value = "";
     document.getElementById("Reps").value = "";
     document.getElementById("Weight").value = "";
     document.getElementById("Lbs").checked = false;
 }
+
+/*********************************************/
 
 function createMessage(type, message, id){
     var mes = createHTMLElement("p", {
@@ -338,12 +370,7 @@ function createMessage(type, message, id){
     }, 5000);
 }
 
-
-
-
-
-
-
+/*********************************************/
 
 function main(id) {
     var a = ajax();
@@ -361,17 +388,17 @@ function main(id) {
     });
     a.get("/workouts", function (res) {
         if(res.status !== 200){
-            createMessage('error', 'Error receiving workouts, please refresh', 923487593847);
+            createMessage('error', 'Error receiving workouts, please verify that you are connected to OSU\'s VPN and then refresh the page', 923487593847);
         }
         workoutTableDiv.appendChild(createTable(JSON.parse(res.response)));
     });
     entry.appendChild(workoutTableDiv);
 
-    // Error Zone
-    var errorDiv = createHTMLElement("div", {
+    // Message Zone
+    var MessageZone = createHTMLElement("div", {
         id: "message-wrapper"
     });
-    entry.appendChild(errorDiv);
+    entry.appendChild(MessageZone);
 
     // If there's a click anywhere on the page
     document.addEventListener("click", function (e) {
